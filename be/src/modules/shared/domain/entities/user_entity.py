@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 import uuid
+
+from pydantic import BaseModel
 
 
 class UserEntity(BaseModel):
@@ -8,3 +9,4 @@ class UserEntity(BaseModel):
     email: str
     is_active: bool = True
     face_encoding: list[float] | None = None
+    face_image: str | None = None

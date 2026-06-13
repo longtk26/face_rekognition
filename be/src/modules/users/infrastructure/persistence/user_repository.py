@@ -36,6 +36,7 @@ class UserRepository(IUserRepository):
             email=model.email,
             is_active=model.is_active,
             face_encoding=face_encoding,
+            face_image=model.face_image,
         )
 
     def __to_model(self, entity: UserEntity) -> UserModel:
@@ -46,6 +47,7 @@ class UserRepository(IUserRepository):
             email=entity.email,
             is_active=entity.is_active,
             face_encoding=face_encoding,
+            face_image=entity.face_image,
         )
 
 IUserRepoDep = Annotated[IUserRepository, Depends(UserRepository)]

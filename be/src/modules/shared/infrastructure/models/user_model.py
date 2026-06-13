@@ -1,6 +1,7 @@
 import uuid
 from typing import Optional
-from sqlmodel import SQLModel, Field
+
+from sqlmodel import Field, SQLModel
 
 
 class UserModel(SQLModel, table=True):
@@ -11,3 +12,4 @@ class UserModel(SQLModel, table=True):
     email: str
     is_active: bool = True
     face_encoding: Optional[str] = Field(default=None)
+    face_image: Optional[str] = Field(default=None)

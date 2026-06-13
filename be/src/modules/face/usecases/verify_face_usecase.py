@@ -1,13 +1,26 @@
-from io import BytesIO
+import base64
 from typing import Annotated
 
-import face_recognition
-import numpy as np
+import boto3
 from fastapi import Depends
 
+from src.configs import config
 from src.libs.exceptions.base_exception import BadRequestException, NotFoundException
 from src.modules.face.presenter.dtos import VerifyFaceResponseDto
 from src.modules.users.ports.output import IUserRepoDep
+
+_rekognition_client = boto3.client(
+    "rekognition",
+    region_name=config.aws_region,
+    **(
+        {
+            "aws_access_key_id": config.aws_access_key_id,
+            "aws_secret_access_key": config.aws_secret_access_key,
+        }
+        if config.aws_access_key_id
+        else {}
+    ),
+)
 
 
 class VerifyFaceUsecase:
@@ -18,18 +31,15 @@ class VerifyFaceUsecase:
         user = self.user_repo.find_by_id(user_id)
         if user is None:
             raise NotFoundException("User not found")
-        if user.face_encoding is None:
-            raise BadRequestException("User has no registered face")
+        if user.face_image is None:
+            raise BadRequestException("User has no registered face image")
 
-        image = face_recognition.load_image_file(BytesIO(image_bytes))
-        encodings = face_recognition.face_encodings(image)
-        if not encodings:
-            raise BadRequestException("No face detected in the image. Please try again with a clearer photo.")
-
-        test_encoding = encodings[0]
-        known_encoding = np.array(user.face_encoding)
-        results = face_recognition.compare_faces([known_encoding], test_encoding, tolerance=0.6)
-        matched = bool(results[0])
+        response = _rekognition_client.compare_faces(
+            SourceImage={"Bytes": base64.b64decode(user.face_image)},
+            TargetImage={"Bytes": image_bytes},
+            SimilarityThreshold=config.aws_rekognition_similarity_threshold,
+        )
+        matched = len(response.get("FaceMatches", [])) > 0
 
         return VerifyFaceResponseDto(matched=matched, user_id=user_id, name=user.username)
 
