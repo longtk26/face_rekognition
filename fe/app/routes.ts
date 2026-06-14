@@ -6,4 +6,5 @@ export default [
   authRoute,
   route("face/register", "routes/face-register.tsx"),
   route("face/verify", "routes/face-verify.tsx"),
+  route("exam", "routes/exam.tsx"),
 ] satisfies RouteConfig;

@@ -33,6 +33,15 @@ export default function Home() {
           <span className="font-semibold text-gray-900">Verify Face</span>
           <span className="text-xs text-gray-500">Check if a face matches a user</span>
         </Link>
+
+        <Link
+          to="/exam"
+          className="flex flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white p-8 shadow-sm hover:shadow-md hover:border-purple-300 transition-all text-center sm:col-span-2"
+        >
+          <span className="text-4xl">🎓</span>
+          <span className="font-semibold text-gray-900">Take Exam</span>
+          <span className="text-xs text-gray-500">Monitored exam with continuous face tracking &amp; fraud detection</span>
+        </Link>
       </div>
     </div>
   );
